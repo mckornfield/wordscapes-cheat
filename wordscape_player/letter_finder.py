@@ -26,7 +26,8 @@ def _filter_overlapping_boxes(boxes: List[pyscreeze.Box]):
         should_add = True
         current_left = box.left
         for left, width in left_and_width:
-            if current_left in range(left - width, left + width):
+            if current_left in range(left - (width // 2), left + (width // 2)):
+                # and current_left in  range(left - width / 2, left + width / 2):
                 should_add = False
         if should_add:
             filtered_boxes.append(box)
