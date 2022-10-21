@@ -19,6 +19,8 @@ def highlight_letters() -> Callable:
         CURRENT_DIR, 'reference_pictures', 'back_arrow.png')
     arrow_box = pg.locateOnScreen(back_arrow_png,
                                   grayscale=True, confidence=0.70)
+    if not arrow_box:
+        raise Exception("No arrow present on the screen")
     left_reference = arrow_box.left
     top_reference = arrow_box.top
     positions = [(300, 500), (400, 600), (400, 700), (200, 700), (200, 600)]
