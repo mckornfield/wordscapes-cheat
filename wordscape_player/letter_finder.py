@@ -13,7 +13,7 @@ def find_letter(letter: str) -> List[pyscreeze.Box]:
     if not os.path.exists(letter_path):
         print(f"Missing letter {letter}")
         return []
-    return list(pg.locateAllOnScreen(letter_path, grayscale=True, confidence=0.85))
+    return list(pg.locateAllOnScreen(letter_path, grayscale=True, confidence=0.95))
 
 
 def _filter_overlapping_boxes(boxes: List[pyscreeze.Box]):
