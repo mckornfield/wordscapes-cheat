@@ -17,4 +17,4 @@ def get_guesses(letters: str) -> set[str]:
         for line in f.read().splitlines():
             if is_match(line, guess_letters, guess_counter):
                 answers.append(line)
-    return answers
+    return sorted(answers, key=len)

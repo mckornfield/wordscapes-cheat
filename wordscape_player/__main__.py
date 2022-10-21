@@ -1,4 +1,7 @@
+import sys
 from time import sleep
+
+import pyautogui as pg
 
 from . import (anagram_solver, dumb_solver, highlighter, letter_finder,
                level_finder, smart_solver)
@@ -21,8 +24,11 @@ if __name__ == "__main__":
             for guess in guesses:
                 print(guess)
                 smart_solver.guess_to_movement(guess, letter_points)
+        except pg.FailSafeException as e:
+            print(e)
+            sys.exit(1)
         except Exception as e:
             print(e)
-            print("Waiting 3 seconds")
-            sleep(3)
+            print("Waiting 1 second")
+            sleep(1)
         # dumb_solver.position_based_permute_solver(center_positions)

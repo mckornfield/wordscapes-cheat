@@ -8,7 +8,7 @@ import pyautogui as pg
 def guess_to_movement(guess: str, letter_points: Dict[str, List[pyscreeze.Point]]) -> None:
     letter_indices = defaultdict(lambda: 0)
     for i, letter in enumerate(guess):
-        duration = 0.001
+        duration = 0.0001
         point_index = letter_indices[letter]
         pos = letter_points[letter][point_index]
         letter_indices[letter] += 1
