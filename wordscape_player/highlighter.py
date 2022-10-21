@@ -18,10 +18,10 @@ def highlight_letters() -> Callable:
     back_arrow_png = os.path.join(
         CURRENT_DIR, 'reference_pictures', 'back_arrow.png')
     arrow_box = pg.locateOnScreen(back_arrow_png,
-                                  grayscale=True, confidence=0.85)
+                                  grayscale=True, confidence=0.70)
     left_reference = arrow_box.left
     top_reference = arrow_box.top
-    positions = [(300, 500), (400, 600), (400, 780), (200, 780), (200, 600)]
+    positions = [(300, 500), (400, 600), (400, 700), (200, 700), (200, 600)]
     for i, position in enumerate(positions):
         x = position[0] + left_reference
         y = position[1] + top_reference

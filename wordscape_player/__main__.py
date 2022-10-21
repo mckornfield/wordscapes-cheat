@@ -1,17 +1,22 @@
-from . import dumb_solver, letter_finder, highlighter, level_finder
+import os
 
-left_char = (360, 820)
-top_char = (480, 695)
-right_char = (605, 814)
+from . import (anagram_solver, highlighter, letter_finder, level_finder,
+               smart_solver)
+
+CURRENT_DIR = os.path.dirname(os.path.realpath(__file__))
 if __name__ == "__main__":
     while True:
-
+        # print(anagram_solver.get_guesses("abasdkjc"))
         image = level_finder.find_finished_image()
         if image:
             level_finder.click_finished_image(image)
         end_highlight = highlighter.highlight_letters()
-        letter_boxes = letter_finder.determine_letter_boxes()
-        print(letter_boxes)
+        letter_points = letter_finder.determine_letter_points()
         end_highlight()
-        center_positions = letter_finder.get_box_centers(letter_boxes.values())
-        dumb_solver.position_based_permute_solver(center_positions)
+        print(letter_points)
+        anagram_input = letter_finder.letter_points_to_word(letter_points)
+        guesses = anagram_solver.get_guesses(anagram_input)
+        for guess in guesses:
+            print(guess)
+            smart_solver.guess_to_movement(guess, letter_points)
+        # dumb_solver.position_based_permute_solver(center_positions)

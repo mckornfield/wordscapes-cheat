@@ -13,7 +13,7 @@ def find_finished_image() -> List[pyscreeze.Box]:
     finished_pictures = os.listdir(dir_path)
     for finished_picture in finished_pictures:
         images = list(pg.locateAllOnScreen(
-            os.path.join(dir_path, finished_picture), grayscale=True, confidence=0.85))
+            os.path.join(dir_path, finished_picture), grayscale=True, confidence=0.65))
         if images:
             print(images[0])
             return images[0]

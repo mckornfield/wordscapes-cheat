@@ -13,7 +13,7 @@ def find_letter(letter: str) -> List[pyscreeze.Box]:
     if not os.path.exists(letter_path):
         print(f"Missing letter {letter}")
         return []
-    return list(pg.locateAllOnScreen(letter_path, grayscale=True, confidence=0.95))
+    return list(pg.locateAllOnScreen(letter_path, grayscale=True, confidence=0.85))
 
 
 def _filter_overlapping_boxes(boxes: List[pyscreeze.Box]):
@@ -34,7 +34,7 @@ def _filter_overlapping_boxes(boxes: List[pyscreeze.Box]):
     return filtered_boxes
 
 
-def determine_letter_boxes() -> Dict[str, List[pyscreeze.Box]]:
+def determine_letter_points() -> Dict[str, List[pyscreeze.Point]]:
     letter_boxes = {}
     for letter in string.ascii_lowercase[:26]:
         possible_letters = find_letter(letter)
@@ -43,9 +43,14 @@ def determine_letter_boxes() -> Dict[str, List[pyscreeze.Box]]:
         filtered_overlapping_boxes = _filter_overlapping_boxes(
             possible_letters)
         if filtered_overlapping_boxes:
-            letter_boxes[letter] = filtered_overlapping_boxes
+            letter_boxes[letter] = [pg.center(box)
+                                    for box in filtered_overlapping_boxes]
     return letter_boxes
 
 
-def get_box_centers(boxes_list: Iterable[List[pyscreeze.Box]]) -> List[pyscreeze.Point]:
-    return [pg.center(box) for boxes in boxes_list for box in boxes]
+def letter_points_to_word(letter_boxes: Dict[str, List[pyscreeze.Point]]) -> str:
+    word_letters = []
+    for letter, points in letter_boxes.items():
+        for _ in range(len(points)):
+            word_letters.append(letter)
+    return ''.join(word_letters)
