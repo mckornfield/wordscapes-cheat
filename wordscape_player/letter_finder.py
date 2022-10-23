@@ -1,5 +1,7 @@
+from concurrent import futures
 import os
 import string
+import threading
 from typing import Dict, List, Tuple
 
 import pyautogui as pg
@@ -56,10 +58,10 @@ def _determine_letter_point(letter: str) -> Tuple[str, List[pyscreeze.Point]]:
 
 def determine_letter_points() -> Dict[str, List[pyscreeze.Point]]:
     letter_boxes = {}
-    for letter in string.ascii_lowercase[:26]:
-        _, points = _determine_letter_point(letter)
-        if points:
-            letter_boxes[letter] = points
+    with futures.ThreadPoolExecutor() as tpe:
+        for letter, points in tpe.map(_determine_letter_point, string.ascii_lowercase[:26]):
+            if points:
+                letter_boxes[letter] = points
     return letter_boxes
 
 
