@@ -23,7 +23,8 @@ def highlight_letters() -> Callable:
         raise Exception("No arrow present on the screen")
     left_reference = arrow_box.left
     top_reference = arrow_box.top
-    positions = [(300, 500), (400, 600), (400, 700), (200, 700), (200, 600)]
+    positions = [(300, 500), (400, 600), (400, 700),
+                 (300, 750), (200, 700), (200, 600)]
     for i, position in enumerate(positions):
         x = position[0] + left_reference
         y = position[1] + top_reference

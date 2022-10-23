@@ -1,6 +1,6 @@
 import os
 import string
-from typing import Dict, Iterable, List
+from typing import Dict, List, Tuple
 
 import pyautogui as pg
 import pyscreeze
@@ -9,44 +9,57 @@ CURRENT_DIR = os.path.dirname(os.path.realpath(__file__))
 
 
 def find_letter(letter: str) -> List[pyscreeze.Box]:
-    letter_path = os.path.join(CURRENT_DIR, 'letter_pictures', letter + '.png')
-    if not os.path.exists(letter_path):
-        print(f"Missing letter {letter}")
-        return []
-    confidence = 0.95 if letter in ('c', 'e', 'f', 'g') else 0.85
-    return list(pg.locateAllOnScreen(letter_path, grayscale=True, confidence=confidence))
+    locations = []
+    letter_dir = os.path.join(CURRENT_DIR, 'letter_pictures')
+    for letter_png in os.listdir(letter_dir):
+        if not letter_png.startswith(letter):
+            continue
+        confidence = 0.90 if letter in ('c', 'e', 'f', 'g', 'o', 'q') else 0.85
+        locations.extend(list(pg.locateAllOnScreen(os.path.join(
+            letter_dir, letter_png), grayscale=True, confidence=confidence)))
+    return locations
 
 
 def _filter_overlapping_boxes(boxes: List[pyscreeze.Box]):
     """
     This is required because lower confidences generate lots of duplicates
     """
-    filtered_boxes = []
-    left_and_width = []
+    filtered_boxes: List[pyscreeze.Box] = []
     for box in boxes:
         should_add = True
         current_left = box.left
-        for left, width in left_and_width:
-            if current_left in range(left - (width // 2), left + (width // 2)):
-                # and current_left in  range(left - width / 2, left + width / 2):
+        current_top = box.top
+        for filtered_box in filtered_boxes:
+            left = filtered_box.left
+            top = filtered_box.top
+            width_half = filtered_box.width // 4
+            height_half = filtered_box.height // 4
+            width_range = range(left - width_half, left + width_half)
+            height_range = range(top - height_half, + top + height_half)
+            if current_left in width_range and current_top in height_range:
                 should_add = False
+                break
         if should_add:
             filtered_boxes.append(box)
-            left_and_width.append((box.left, box.width))
     return filtered_boxes
+
+
+def _determine_letter_point(letter: str) -> Tuple[str, List[pyscreeze.Point]]:
+    possible_letters = find_letter(letter)
+    points = []
+    filtered_overlapping_boxes = _filter_overlapping_boxes(
+        possible_letters)
+    if filtered_overlapping_boxes:
+        points = [pg.center(box) for box in filtered_overlapping_boxes]
+    return letter, points
 
 
 def determine_letter_points() -> Dict[str, List[pyscreeze.Point]]:
     letter_boxes = {}
     for letter in string.ascii_lowercase[:26]:
-        possible_letters = find_letter(letter)
-        if not possible_letters:
-            continue
-        filtered_overlapping_boxes = _filter_overlapping_boxes(
-            possible_letters)
-        if filtered_overlapping_boxes:
-            letter_boxes[letter] = [pg.center(box)
-                                    for box in filtered_overlapping_boxes]
+        _, points = _determine_letter_point(letter)
+        if points:
+            letter_boxes[letter] = points
     return letter_boxes
 
 
